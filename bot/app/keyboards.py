@@ -16,7 +16,6 @@ def main_menu() -> InlineKeyboardMarkup:
         ],
         [
             InlineKeyboardButton(text="📜 Уход за тату", callback_data="aftercare"),
-            InlineKeyboardButton(text="🎨 Стили и цены", callback_data="prices"),
         ],
         [
             InlineKeyboardButton(text="✍️ Записаться", callback_data="booking"),

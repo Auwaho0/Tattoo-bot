@@ -19,7 +19,7 @@ export const WorkCard = ({ work, index }: WorkCardProps) => (
     <div className="p-3">
       <h3 className="serif text-sm">{work.title}</h3>
       <p className="text-xs text-txt-secondary">
-        {work.style} · {work.price} ₽
+        {work.price} ₽
       </p>
     </div>
   </motion.article>

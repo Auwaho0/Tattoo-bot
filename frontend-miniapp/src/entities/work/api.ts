@@ -4,18 +4,22 @@ import type { Work } from './model/types';
 
 export const workKeys = {
   all: ['works'] as const,
-  list: (style?: string) => [...workKeys.all, 'list', style ?? 'all'] as const,
+  list: () => [...workKeys.all, 'list'] as const,
 };
 
-export const fetchWorks = async (style?: string): Promise<Work[]> => {
-  const { data } = await apiClient.get<Work[]>('/api/portfolio', {
-    params: style ? { style } : undefined,
-  });
+export const fetchWorks = async (): Promise<Work[]> => {
+  const { data } = await apiClient.get<Work[]>('/api/portfolio');
+  console.log('Fetched works:', data); // Log the fetched data for debugging
   return data;
 };
 
-export const useWorksQuery = (style?: string) =>
+export const useWorksQuery = () =>
   useQuery({
-    queryKey: workKeys.list(style),
-    queryFn: () => fetchWorks(style),
+    queryKey: workKeys.list(),
+    queryFn: fetchWorks,
+    staleTime: 1000 * 60 * 60 * 1,   // 1 час
+    gcTime: 1000 * 60 * 60 * 24,   // 24 часа держим в памяти
+    retry: 2,
+    refetchOnWindowFocus: false,       // не дёргать при каждом alt-tab
+    refetchOnReconnect: false,
   });

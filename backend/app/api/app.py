@@ -25,13 +25,30 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
-    )
+    has_wildcard = "*" in CORS_ORIGINS
+
+    if has_wildcard:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+            expose_headers=["*"],
+            max_age=86400,     # кэш preflight на сутки
+        )
+    else:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=CORS_ORIGINS,
+            allow_origin_regex=r"https://([a-z0-9-]+\.)*(telegram\.org|t\.me)",
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+            expose_headers=["*"],
+            max_age=86400,
+        )
+
 
     app.include_router(portfolio.router)
     app.include_router(sketches.router)

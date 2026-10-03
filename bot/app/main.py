@@ -8,7 +8,7 @@ from aiogram.enums import ParseMode
 
 from app.config import BOT_TOKEN
 from app.database import engine
-from app.handlers import start, admin, booking, portfolio, sketches
+from app.handlers import about, aftercare, contacts, start, admin, booking, portfolio, sketches
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,6 +21,9 @@ def build_dispatcher() -> Dispatcher:
     dp = Dispatcher()
     dp.include_router(start.router)
     dp.include_router(admin.router)
+    dp.include_router(contacts.router)
+    dp.include_router(about.router)
+    dp.include_router(aftercare.router)
     dp.include_router(booking.router)
     dp.include_router(portfolio.router)
     dp.include_router(sketches.router)

@@ -4,9 +4,12 @@ import bgLight from '@/assets/light/bg-light.png';
 import bgDark from '@/assets/dark/bg-hero.png';
 
 
+
+
 import { DualImage } from '@/shared/ui';
 import { Hero } from '@/features/home';
 import { NavMenu } from '@/features/home/navMenu';
+import { House, UserPen } from 'lucide-react';
 
 const NAVITEMS = [
   {
@@ -46,6 +49,7 @@ export const HomePage = () => {
           : 'bg-[#f7f6f2] border-x border-[#ded8cb]'
         }`}>
 
+
         <div
           className='relative h-70 px-2'
         >
@@ -81,6 +85,25 @@ export const HomePage = () => {
               context={context}
             />
           ))}
+        </div>
+
+
+        <div className='w-full px-5 py-3 '>
+          <div className={`grid grid-cols-2 grid-[1fr_1fr] h-12 rounded-2xl px-4 py-2 text-center text-xs font-light border-[#322d27] bg-[#111111]`}>
+
+            <button
+              className='flex items-center justify-center gap-2 cursor-pointer'
+              onClick={() => console.log('Note')}>
+              <House size={30} strokeWidth={2} />
+            </button>
+
+            <button
+              className='flex items-center justify-center gap-2 cursor-pointer'
+              onClick={() => console.log('Note')} >
+              <UserPen size={30} strokeWidth={2} />
+            </button>
+
+          </div>
         </div>
 
 
