@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-gothic: 'UnifrakturMaguntia', 'Cinzel Decorative', cursive, serif;
+    --font-cinzel: 'Cinzel', serif;
+    --font-script: "Script Thin Pen", cursive;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    /* Light Theme (parchment, marble, graphite) */
+    --bg-primary: #f6f5f1;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.88);
+    --bg-card-hover: rgba(255, 255, 255, 0.98);
+    --text-primary: #1c1a17;
+    --text-secondary: #68635c;
+    --text-muted: #958e85;
+    --border-color: #e6e2d9;
+    --border-subtle: #f0ece3;
+    --accent: #23201d;
+    --accent-gold: #b38b4d;
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  }
+
+  .dark {
+    /* Dark Theme (obsidian, graphite, warm bronze) */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #121212;
+    --bg-card: rgba(22, 22, 22, 0.85);
+    --bg-card-hover: rgba(28, 28, 28, 0.95);
+    --text-primary: #f0ebe4;
+    --text-secondary: #a0978d;
+    --text-muted: #6b645b;
+    --border-color: #272421;
+    --border-subtle: #1c1a18;
+    --accent: #e8e2d8;
+    --accent-gold: #cba86e;
+    --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4), 0 2px 8px -1px rgba(0, 0, 0, 0.3);
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: Nunito Sans;
+    transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+
+    overflow-x: hidden;
+  }
+}
+
+@font-face {
+  font-family: 'CS Mistbane';
+  src: url('@/assets/fonts/CSMistbane.otf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Script Thin Pen';
+  src: url('@/assets/fonts/Script Thin Pen.ttf') format('truetype');
+  font-weight: 800;
+  font-display: swap;
+}
+
+.font-gothic {
+  font-family: 'CS Mistbane', 'Cinzel Decorative';
+}
+
+.font-script {
+  font-family: 'Script Thin Pen', cursive;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+.font-nunito-sans {
+  font-family: "Nunito Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100,
+    "YTLC" 500;
+}
+
+/* Smooth theme transitions */
+.theme-transition {
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.4);
+}
+
+
+
+.panel {
+  position: fixed;
+  inset: 0;
+  /* top/right/bottom/left: 0 */
+  /* обязательно непрозрачный, иначе видно низ */
+  overflow-y: auto;
+  z-index: 50;
+  /* ниже, чем у открытой */
+
+  transform: translateX(100%);
+  /* спрятана справа за экраном */
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+
+  pointer-events: none;
+  /* чтобы невидимая панель не ловила клики */
+}
+
+.open {
+  transform: translateX(0);
+  z-index: 100;
+  /* открытая всегда поверх закрытых */
+  pointer-events: auto;
+}

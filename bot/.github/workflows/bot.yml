@@ -1,0 +1,36 @@
+name: EverArt Bot
+
+on:
+  schedule:
+    - cron: "0 */5 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: everart-bot
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: bot/requirements.txt
+
+      - name: 📦 Установка зависимостей
+        working-directory: bot
+        run: pip install -r requirements.txt
+
+      - name: 🦇 Запуск бота (до 5ч40м)
+        working-directory: bot
+        env:
+          BOT_TOKEN:    ${{ secrets.BOT_TOKEN }}
+          ADMIN_ID:     ${{ secrets.ADMIN_ID }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          timeout 340m python -m app.main || true

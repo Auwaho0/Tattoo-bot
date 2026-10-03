@@ -1,0 +1,40 @@
+
+services:
+  bot:
+    build: .
+    container_name: everart-bot
+    restart: unless-stopped
+    env_file:
+      - .env # Секреты подгружаются из .env на сервере
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://everart:everart_pass@db:5432/everart
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - everart-network
+
+  db:
+    image: postgres:16-alpine
+    container_name: everart-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: everart
+      POSTGRES_PASSWORD: everart_pass
+      POSTGRES_DB: everart
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U everart" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - everart-network
+
+volumes:
+  postgres_data:
+
+networks:
+  everart-network:
+    driver: bridge
