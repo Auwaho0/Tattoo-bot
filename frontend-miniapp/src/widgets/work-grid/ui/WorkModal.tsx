@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Work } from '@/entities/work';
 import "./style.css"
+import { getPhotoUrl } from '@/shared/lib';
 
 interface WorkModalProps {
   work: Work;
@@ -21,7 +22,7 @@ export const WorkModal = ({ work, onClose }: WorkModalProps) => {
     };
   }, [onClose]);
 
-  const photoUrl = work.photo_file_id;
+  const photoUrl = getPhotoUrl(work.photo_file_id);
 
   return createPortal(
     <div

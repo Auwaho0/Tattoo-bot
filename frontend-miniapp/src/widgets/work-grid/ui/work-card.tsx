@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import type { Work } from '@/entities/work';
 import { WorkModal } from './WorkModal';
+
 import "./style.css"
+import { getPhotoUrl } from '@/shared/lib';
 
 interface WorkCardProps {
   work: Work;
@@ -10,7 +12,7 @@ interface WorkCardProps {
 
 export const WorkCard = ({ work, index }: WorkCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const photoUrl = work.photo_file_id;
+  const photoUrl = getPhotoUrl(work.photo_file_id);
 
   return (
     <>

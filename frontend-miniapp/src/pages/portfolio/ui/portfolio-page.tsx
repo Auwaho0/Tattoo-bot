@@ -52,6 +52,20 @@ export const PortfolioPage = () => {
     <div className="flex p-4 bg-[#111111] h-full justify-center">
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
 
+        <div style={{ padding: 20, background: '#222' }}>
+          <p style={{ color: '#fff' }}>
+            API_URL = [{import.meta.env.VITE_API_URL}]
+          </p>
+          <p style={{ color: '#fff' }}>
+            file_id = [{works[0]?.photo_file_id}]
+          </p>
+          <img
+            src={`${import.meta.env.VITE_API_URL}/api/photo/${works[0]?.photo_file_id}`}
+            style={{ width: 200, height: 200, background: 'red' }}
+            alt="test"
+          />
+        </div>
+
         <div className="w-full max-w-md">
           <BackButton isDark={isDark} />
         </div>
