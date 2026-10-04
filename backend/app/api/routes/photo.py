@@ -1,11 +1,6 @@
 """
 Прокси фото из Telegram по file_id.
-
-Проблема: Telegram CDN отдаёт файлы с Content-Type: application/octet-stream,
-из-за чего браузер не отображает картинку в <img>, а пытается её скачать.
-
-Решение: определяем MIME по расширению файла из file_path (Telegram всегда
-возвращает путь вида photos/file_123.jpg), а не по заголовку ответа.
+Читаем файл в память — так надёжнее, чем StreamingResponse + aiohttp.
 """
 import logging
 import mimetypes
@@ -13,7 +8,7 @@ import time
 
 import aiohttp
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 from app.config import BOT_TOKEN, TELEGRAM_API
 
@@ -21,12 +16,9 @@ log = logging.getLogger("everart.photo")
 router = APIRouter(prefix="/api", tags=["photo"])
 
 # In-memory кэш: file_id -> (file_path, expires_at)
-# file_path от Telegram живёт ~1 час. Кэшируем на 50 минут.
 _path_cache: dict[str, tuple[str, float]] = {}
 CACHE_TTL = 50 * 60
 
-# Явный словарь MIME для популярных расширений Telegram.
-# mimetypes.guess_type() на slim-образе Python может не знать про webp/heic.
 _EXTRA_TYPES = {
     ".jpg":  "image/jpeg",
     ".jpeg": "image/jpeg",
@@ -39,41 +31,24 @@ _EXTRA_TYPES = {
 
 
 def _guess_mime(file_path: str) -> str:
-    """
-    Определяет MIME-тип картинки по расширению из file_path.
-    Пример: 'photos/file_123.jpg' -> 'image/jpeg'
-    """
     lower = file_path.lower()
-
-    # Сначала явный словарь
     for ext, mime in _EXTRA_TYPES.items():
         if lower.endswith(ext):
             return mime
-
-    # Затем стандартный mimetypes — на случай нестандартных расширений
     guessed, _ = mimetypes.guess_type(file_path)
     if guessed and guessed.startswith("image/"):
         return guessed
-
-    # Fallback: Telegram всегда отдаёт картинки, но если всё сломалось —
-    # отдаём как jpeg, это безопаснее чем application/octet-stream.
     return "image/jpeg"
 
 
 async def _get_file_path(session: aiohttp.ClientSession, file_id: str) -> str:
-    """
-    Возвращает file_path из Telegram getFile, с кэшем на 50 минут.
-    file_path — временный URL-путь, живёт ~1 час.
-    """
     now = time.time()
     cached = _path_cache.get(file_id)
     if cached and cached[1] > now:
         return cached[0]
 
-    async with session.get(
-        f"{TELEGRAM_API}/getFile",
-        params={"file_id": file_id},
-    ) as r:
+    url = f"{TELEGRAM_API}/getFile"
+    async with session.get(url, params={"file_id": file_id}) as r:
         data = await r.json()
 
     if not data.get("ok"):
@@ -89,31 +64,43 @@ async def _get_file_path(session: aiohttp.ClientSession, file_id: str) -> str:
 @router.get("/photo/{file_id}")
 async def get_photo(file_id: str):
     """
-    Стримит картинку из Telegram браузеру.
-    Корректный Content-Type + inline + суточный кэш.
+    Скачивает фото из Telegram и отдаёт браузеру.
+    Файл целиком в памяти — фото тату < 5 МБ, это ок.
     """
-    timeout = aiohttp.ClientTimeout(total=15)
+    timeout = aiohttp.ClientTimeout(total=20)
 
-    async with aiohttp.ClientSession(timeout=timeout) as session:
-        # 1. Получаем путь к файлу (с кэшем)
-        file_path = await _get_file_path(session, file_id)
-        file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+    try:
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            file_path = await _get_file_path(session, file_id)
+            file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
 
-        # 2. Скачиваем и стримим клиенту
-        async with session.get(file_url) as r:
-            if r.status != 200:
-                raise HTTPException(404, "Не удалось скачать файл из Telegram")
+            async with session.get(file_url) as r:
+                if r.status != 200:
+                    body = await r.text()
+                    log.warning("Telegram file download failed %s: %s", r.status, body[:200])
+                    raise HTTPException(
+                        502, f"Telegram вернул {r.status}"
+                    )
 
-            content_type = _guess_mime(file_path)
-            log.info("Serving %s as %s", file_path, content_type)
+                # Читаем содержимое в память — сессия закроется после
+                content = await r.read()
+                content_type = _guess_mime(file_path)
+                log.info("Serving %s (%d bytes) as %s", file_path, len(content), content_type)
 
-            return StreamingResponse(
-                r.content.iter_chunked(64 * 1024),
-                media_type=content_type,
-                headers={
-                    # Суточный кэш в браузере — Telegram-файл неизменен
-                    "Cache-Control": "public, max-age=86400, immutable",
-                    # «Показывай», а не «скачивай»
-                    "Content-Disposition": "inline",
-                },
-            )
+    except aiohttp.ClientError as e:
+        log.exception("aiohttp error for file_id=%s", file_id[:30])
+        raise HTTPException(502, f"Ошибка сети: {type(e).__name__}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        log.exception("Unexpected error for file_id=%s", file_id[:30])
+        raise HTTPException(500, f"Внутренняя ошибка: {type(e).__name__}")
+
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Cache-Control": "public, max-age=86400, immutable",
+            "Content-Disposition": "inline",
+        },
+    )
