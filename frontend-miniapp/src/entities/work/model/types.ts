@@ -7,5 +7,15 @@ export interface Work {
   price: number;
   photo_file_id: string;
   description: string | null;
-  created_at: string;      // ISO-строка из JSON
+  created_at: string;
 }
+
+export interface WorkPage {
+  items: Work[];
+  total: number;
+  limit: number;
+  offset: number;
+  has_more: boolean;
+}
+
+export type SortOrder = 'new' | 'old';

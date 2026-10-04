@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS
 from app.database import engine
-from app.api.routes import portfolio, sketches, bookings
+from app.api.routes import portfolio, sketches, bookings, photo
+
 
 
 @asynccontextmanager
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(portfolio.router)
     app.include_router(sketches.router)
     app.include_router(bookings.router)
+    app.include_router(photo.router)
 
     @app.get("/health", tags=["service"])
     async def health():

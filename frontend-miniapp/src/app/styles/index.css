@@ -111,12 +111,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.25);
-  border-radius: 9999px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.4);
+  background: transparent;
 }
 
 
@@ -128,7 +127,6 @@
   /* обязательно непрозрачный, иначе видно низ */
   overflow-y: auto;
   z-index: 50;
-  /* ниже, чем у открытой */
 
   transform: translateX(100%);
   /* спрятана справа за экраном */

@@ -16,6 +16,15 @@ class WorkOut(BaseModel):
     description: Optional[str] = None
     created_at: datetime
 
+
+class WorkPage(BaseModel):
+    """Страница работ с метаданными пагинации."""
+    items: list[WorkOut]
+    total: int
+    limit: int
+    offset: int
+    has_more: bool
+
 # ---------- Sketch ----------
 class SketchOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -28,6 +37,14 @@ class SketchOut(BaseModel):
     status: Literal["free", "sold"]
     photo_file_id: str
     created_at: datetime
+
+class SketchPage(BaseModel):
+    """Страница эскизов с метаданными пагинации."""
+    items: list[SketchOut]
+    total: int
+    limit: int
+    offset: int
+    has_more: bool
 
 # ---------- Booking ----------
 class BookingCreate(BaseModel):

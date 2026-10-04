@@ -7,4 +7,13 @@ export interface Sketch {
   new_price: number;
   status: 'free' | 'sold';
   photo_file_id: string;
+  created_at: string;
+}
+
+export interface SketchPage {
+  items: Sketch[];
+  total: number;
+  limit: number;
+  offset: number;
+  has_more: boolean;
 }

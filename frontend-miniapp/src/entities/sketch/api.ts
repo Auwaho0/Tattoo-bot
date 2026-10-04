@@ -1,24 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '@/shared/api';
-import type { Sketch } from './model/types';
+import type { SketchPage } from './model/types';
+
+export const PAGE_SIZE = 12;
 
 export const sketchKeys = {
   all: ['sketches'] as const,
   list: () => [...sketchKeys.all, 'list'] as const,
 };
 
-export const fetchSketches = async (): Promise<Sketch[]> => {
-  const { data } = await apiClient.get<Sketch[]>('/api/sketches');
+export const fetchSketches = async (offset: number): Promise<SketchPage> => {
+  const { data } = await apiClient.get<SketchPage>('/api/sketches', {
+    params: { limit: PAGE_SIZE, offset },
+  });
   return data;
 };
 
 export const useSketchesQuery = () =>
-  useQuery({
+  useInfiniteQuery({
     queryKey: sketchKeys.list(),
-    queryFn: fetchSketches,
-    staleTime: 1000 * 60 * 5,        // 5 минут — статус free/sold должен быть свежим
-    gcTime: 1000 * 60 * 30,       // 30 минут в памяти — хватит для навигации
-    refetchOnWindowFocus: true,      // вернулся в Mini App → проверь актуальность
-    refetchOnReconnect: true,        // сеть вернулась → тоже проверь
+    queryFn: ({ pageParam }) => fetchSketches(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.has_more ? lastPage.offset + lastPage.limit : undefined,
+    staleTime: 1000 * 60 * 5,     // 5 минут — статус free/sold должен быть свежим
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: true,    // вернулся в Mini App → проверь актуальность
+    refetchOnReconnect: true,
     retry: 2,
   });

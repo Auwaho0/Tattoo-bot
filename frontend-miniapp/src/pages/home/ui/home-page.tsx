@@ -10,29 +10,9 @@ import { DualImage } from '@/shared/ui';
 import { Hero } from '@/features/home';
 import { NavMenu } from '@/features/home/navMenu';
 import { House, UserPen } from 'lucide-react';
+import { NAVITEMS } from '@/pages/home/model/navItems';
 
-const NAVITEMS = [
-  {
-    id: "sketch",
-    title: "ЭСКИЗ",
-    context: "Готовые эскизы\nсо скидкой",
-  },
-  {
-    id: "portfolio",
-    title: "ПОРТФОЛИО",
-    context: "Мои работы",
-  },
-  {
-    id: "about",
-    title: "ИНФОРМАЦИЯ",
-    context: "Обо мне, стиле\nи подходе",
-  },
-  {
-    id: "note",
-    title: "ЗАПИСЬ",
-    context: "Запись на сеанс\nили консультацию",
-  },
-];
+
 
 
 export const HomePage = () => {
