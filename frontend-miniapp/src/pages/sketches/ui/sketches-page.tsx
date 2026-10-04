@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useSketchesQuery } from '@/entities/sketch';
+import { useSketchesQuery, usePrefetchNextSketches } from '@/entities/sketch';
 import type { Sketch } from '@/entities/sketch';
 import { SketchCard } from '@/widgets/sketch-grid';
 import { useTheme } from '@/features/home';
@@ -16,6 +16,7 @@ export const SketchesPage = () => {
     isFetchingNextPage,
   } = useSketchesQuery();
 
+  const prefetchNext = usePrefetchNextSketches();
   const isDark = useTheme((s) => s.isDark);
 
   const sketches: Sketch[] = useMemo(
@@ -24,8 +25,31 @@ export const SketchesPage = () => {
   );
 
   const total = data?.pages[0]?.total ?? 0;
+  const pagesCount = data?.pages.length ?? 0;
 
-  // Авто-подгрузка
+  // Observer #1: PREFETCH — за 2000px до конца
+  const prefetchRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = prefetchRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+
+        const pages = data?.pages ?? [];
+        const last = pages[pages.length - 1];
+        if (!last || !hasNextPage) return;
+
+        prefetchNext(last.offset + last.limit);
+      },
+      { rootMargin: '1200px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [pagesCount, hasNextPage, prefetchNext]);
+
+  // Observer #2: FETCH — за 300px до конца
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = sentinelRef.current;
@@ -33,7 +57,8 @@ export const SketchesPage = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (!entries[0].isIntersecting) return;
+        if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
@@ -46,7 +71,6 @@ export const SketchesPage = () => {
   return (
     <div className="flex p-4 bg-[#111111] h-full justify-center">
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
-
         <div className="w-full max-w-md">
           <BackButton isDark={isDark} />
         </div>
@@ -60,9 +84,7 @@ export const SketchesPage = () => {
           </h3>
         </div>
 
-        {isLoading && (
-          <div className="text-[#898989] py-8">Загрузка…</div>
-        )}
+        {isLoading && <div className="text-[#898989] py-8">Загрузка…</div>}
 
         {isError && (
           <div className="text-red-500/80 py-8 text-center">
@@ -84,6 +106,8 @@ export const SketchesPage = () => {
 
         {!isLoading && !isError && sketches.length > 0 && (
           <>
+            <div ref={prefetchRef} aria-hidden className="h-1 w-full" />
+
             <div className="grid grid-cols-2 gap-3 w-full max-w-md">
               {sketches.map((sketch, i) => (
                 <SketchCard key={sketch.id} sketch={sketch} index={i} />

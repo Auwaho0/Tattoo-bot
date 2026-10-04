@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useWorksQuery } from '@/entities/work';
+import { useWorksQuery, usePrefetchNextWorks } from '@/entities/work';
 import type { Work, SortOrder } from '@/entities/work';
 import { WorkCard } from '@/widgets/work-grid';
 import { useTheme } from '@/features/home';
@@ -10,7 +10,6 @@ import { BackButton } from '@/shared/ui';
 export const PortfolioPage = () => {
   const [sortOrder, setSortOrder] = useState<SortOrder>('new');
 
-  // Передаём order в хук — он сам сменит queryKey и перезагрузит первую страницу
   const {
     data,
     isLoading,
@@ -20,17 +19,46 @@ export const PortfolioPage = () => {
     isFetchingNextPage,
   } = useWorksQuery(sortOrder);
 
+  const prefetchNext = usePrefetchNextWorks(sortOrder);
   const isDark = useTheme((s) => s.isDark);
 
-  // Склеиваем страницы в один массив — порядок уже правильный с бэкенда
   const works: Work[] = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
     [data],
   );
 
   const total = data?.pages[0]?.total ?? 0;
+  const pagesCount = data?.pages.length ?? 0;
 
-  // Авто-подгрузка при скролле
+  // =========================================================
+  // Observer #1: PREFETCH — срабатывает за 2000px до конца
+  // Кладёт следующую страницу в кэш заранее
+  // =========================================================
+  const prefetchRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = prefetchRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+
+        const pages = data?.pages ?? [];
+        const last = pages[pages.length - 1];
+        if (!last || !hasNextPage) return;
+
+        prefetchNext(last.offset + last.limit);
+      },
+      { rootMargin: '1200px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [pagesCount, hasNextPage, prefetchNext]);
+
+  // =========================================================
+  // Observer #2: FETCH — срабатывает за 300px до конца
+  // К этому моменту данные обычно уже в кэше (prefetch успел)
+  // =========================================================
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = sentinelRef.current;
@@ -38,7 +66,8 @@ export const PortfolioPage = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (!entries[0].isIntersecting) return;
+        if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
@@ -51,21 +80,6 @@ export const PortfolioPage = () => {
   return (
     <div className="flex p-4 bg-[#111111] h-full justify-center">
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
-
-        <div style={{ padding: 20, background: '#222' }}>
-          <p style={{ color: '#fff' }}>
-            API_URL = [{import.meta.env.VITE_API_URL}]
-          </p>
-          <p style={{ color: '#fff' }}>
-            file_id = [{works[0]?.photo_file_id}]
-          </p>
-          <img
-            src={`${import.meta.env.VITE_API_URL}/api/photo/${works[0]?.photo_file_id}`}
-            style={{ width: 200, height: 200, background: 'red' }}
-            alt="test"
-          />
-        </div>
-
         <div className="w-full max-w-md">
           <BackButton isDark={isDark} />
         </div>
@@ -85,9 +99,7 @@ export const PortfolioPage = () => {
           </div>
         )}
 
-        {isLoading && (
-          <div className="text-[#898989] py-8">Загрузка…</div>
-        )}
+        {isLoading && <div className="text-[#898989] py-8">Загрузка…</div>}
 
         {isError && (
           <div className="text-red-500/80 py-8 text-center">
@@ -109,12 +121,16 @@ export const PortfolioPage = () => {
 
         {!isLoading && !isError && works.length > 0 && (
           <>
+            {/* Prefetch-маркер — стоит ПЕРЕД сеткой, чтобы срабатывать задолго до конца */}
+            <div ref={prefetchRef} aria-hidden className="h-1 w-full" />
+
             <div className="grid grid-cols-2 gap-3 w-full max-w-md">
               {works.map((work, i) => (
                 <WorkCard key={work.id} work={work} index={i} />
               ))}
             </div>
 
+            {/* Fetch-маркер — прямо перед кнопкой, срабатывает последним */}
             <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
 
             <LoadMoreButton

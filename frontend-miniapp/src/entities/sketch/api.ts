@@ -1,4 +1,8 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query';
 import { apiClient } from '@/shared/api';
 import type { SketchPage } from './model/types';
 
@@ -23,9 +27,30 @@ export const useSketchesQuery = () =>
     initialPageParam: 0,
     getNextPageParam: (lastPage) =>
       lastPage.has_more ? lastPage.offset + lastPage.limit : undefined,
-    staleTime: 1000 * 60 * 5,     // 5 минут — статус free/sold должен быть свежим
-    gcTime: 1000 * 60 * 30,
-    refetchOnWindowFocus: true,    // вернулся в Mini App → проверь актуальность
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60 * 24,
+    refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     retry: 2,
   });
+
+export const usePrefetchNextSketches = () => {
+  const qc = useQueryClient();
+
+  return (nextOffset: number) => {
+    const key = sketchKeys.list();
+
+    const cached = qc.getQueryData<InfiniteData<SketchPage>>(key);
+    const lastPage = cached?.pages[cached.pages.length - 1];
+    if (lastPage && !lastPage.has_more) return;
+
+    qc.prefetchInfiniteQuery({
+      queryKey: key,
+      queryFn: ({ pageParam }) => fetchSketches(pageParam as number),
+      initialPageParam: nextOffset,
+      getNextPageParam: (last: { has_more: any; offset: any; limit: any; }) =>
+        last.has_more ? last.offset + last.limit : undefined,
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+};
