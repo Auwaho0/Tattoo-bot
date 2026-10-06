@@ -19,3 +19,17 @@
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes tapPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(187, 166, 141, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px rgba(187, 166, 141, 0);
+  }
+}
+
+.work-card:active {
+  animation: tapPulse 200ms ease-out;
+}

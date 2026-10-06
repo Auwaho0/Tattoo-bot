@@ -1,4 +1,3 @@
 export { Button, type ButtonProps } from './button';
 export { DualImage, type DualImageProps } from './dual-image';
-export { PageTransition } from './PageTransition'
 export { BackButton } from './backButton';

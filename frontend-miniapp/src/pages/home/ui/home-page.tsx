@@ -9,13 +9,18 @@ import bgDark from '@/assets/dark/bg-hero.png';
 import { DualImage } from '@/shared/ui';
 import { Hero } from '@/features/home';
 import { NavMenu } from '@/features/home/navMenu';
-import { House, UserPen } from 'lucide-react';
+// import { House, UserPen } from 'lucide-react';
 import { NAVITEMS } from '@/pages/home/model/navItems';
+import { f } from '@/shared/lib/telegram';
 
 
 
 
 export const HomePage = () => {
+
+  const ff = f()
+
+
   const isDark = useTheme((s) => s.isDark);
   return (
     <main className={`min-h-screen theme-transition flex justify-center 
@@ -23,7 +28,7 @@ export const HomePage = () => {
         ? 'bg-[#080808] text-[#f0ebe4]'
         : 'bg-[#e8e5dc] text-[#1c1a17]'
       }`}>
-      <div className={`w-full max-w-md min-h-screen relative lg:mt-4 flex flex-col theme-transition shadow-2xl 
+      <div className={`w-full max-w-md min-h-screen relative lg:mt-4 flex flex-col theme-transition shadow-2xl  
         ${isDark
           ? 'bg-[#000000] border-x border-[#1a1816]'
           : 'bg-[#f7f6f2] border-x border-[#ded8cb]'
@@ -49,6 +54,8 @@ export const HomePage = () => {
             <ThemeToggle />
 
             <Hero />
+
+
           </DualImage>
 
 
@@ -65,10 +72,11 @@ export const HomePage = () => {
               context={context}
             />
           ))}
+          <span>{ff}</span>
         </div>
 
 
-        <div className='w-full px-5 py-3 '>
+        {/* <div className='w-full px-5 py-3 '>
           <div className={`grid grid-cols-2 grid-[1fr_1fr] h-12 rounded-2xl px-4 py-2 text-center text-xs font-light border-[#322d27] bg-[#111111]`}>
 
             <button
@@ -84,7 +92,7 @@ export const HomePage = () => {
             </button>
 
           </div>
-        </div>
+        </div> */}
 
 
       </div >

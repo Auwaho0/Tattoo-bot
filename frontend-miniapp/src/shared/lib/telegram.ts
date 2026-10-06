@@ -1,3 +1,8 @@
+import { useTheme } from "@/features/home";
+import { useEffect } from "react";
+
+
+
 export const tg = (): TelegramWebApp | undefined => window.Telegram?.WebApp;
 
 export const initTelegram = (): void => {
@@ -5,12 +10,25 @@ export const initTelegram = (): void => {
   if (!app) return;
   app.ready();
   app.expand();
-  app.setHeaderColor('#0A0A0C');
-  app.setBackgroundColor('#0A0A0C');
 };
 
-export const haptic = (type: 'light' | 'medium' | 'heavy' = 'light'): void => {
-  tg()?.HapticFeedback.impactOccurred(type);
+export const colorsShema = (): void => {
+  tg()?.colorScheme;
 };
+
+export const f = () => {
+  const isDark = useTheme((s) => s.isDark);
+  const toggle = useTheme((s) => s.toggle);
+
+
+
+
+  useEffect(() => {
+    console.log(colorsShema())
+  }, []);
+
+  return (isDark ? 'dark' : 'light')
+}
+
 
 export const getInitData = (): string => tg()?.initData ?? '';

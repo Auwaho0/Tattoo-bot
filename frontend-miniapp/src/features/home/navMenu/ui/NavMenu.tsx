@@ -18,7 +18,14 @@ export const NavMenu = ({ id, title, context }: NavMenuProps) => {
 
   return (
     <div className="relative flex flex-col px-5 my-3">
-      <Link to={`/${id}`} className="border border-[#322d27] bg-[#111111] rounded-xl h-25 cursor-pointer hover:bg-[#242424]">
+      <Link
+        to={`/${id}`}
+        className={` border border-[#322d27] bg-[#111111] rounded-xl h-25 cursor-pointer hover:bg-[#242424]  transition-all duration-300
+        ${isDark
+            ? 'bg-[#080808] text-[#bba68d] anim-tapPulseDark'
+            : 'bg-[#f7f6f2] text-[#1c1a17] anim-tapPulseLight'
+          }`}>
+
         <div className="grid grid-cols-[45fr_35fr_10fr] h-full rounded-lg">
           <div
             className="relative flex flex-col items-center justify-center bg-black rounded-xl"
@@ -37,7 +44,7 @@ export const NavMenu = ({ id, title, context }: NavMenuProps) => {
 
           <div className="flex flex-col items-center justify-center text-left">
             <span
-              className="pl-2 w-full text-[#bba68d] text-[16px] pb-1 font-nunito-sans"
+              className="pl-2 w-full  text-[16px] pb-1 font-nunito-sans"
               style={{ fontWeight: 400 }}
             >
               {title}
@@ -52,13 +59,13 @@ export const NavMenu = ({ id, title, context }: NavMenuProps) => {
 
           <div className="flex flex-col items-end justify-end text">
             <ChevronsRight
-              color="#a89681"
+              color={`${isDark ? '#bba68d' : '#1c1a17'}`}
               className="mr-2 mb-2"
               size={30}
             />
           </div>
         </div>
-      </Link>
+      </Link >
     </div >
   );
 };

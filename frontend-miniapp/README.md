@@ -41,3 +41,14 @@ See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rule
 забилдим npm run build
 
 задеплоим firebase deploy --only hosting
+
+
+
+планы на мини апп
+1. сделать нав меню с обо мне
+2. сделать нав меню запись
+3. улучишь визуализацию
+- фон в главно меню
+- смену темы 
+- для телефона анимации
+4. провести оптимизацию

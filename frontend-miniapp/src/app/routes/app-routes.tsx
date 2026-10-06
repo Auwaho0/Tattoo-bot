@@ -2,14 +2,14 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { HomePage } from '@/pages/home';
 import { PortfolioPage } from '@/pages/portfolio';
 import { SketchesPage } from '@/pages/sketches';
-import { AboutPage } from '@/pages/about';
+import { TattooСare } from '@/pages/tattooСare';
 import { NotePage } from '@/pages/note';
 
 
 const PANELS = [
   { path: '/portfolio', Component: PortfolioPage },
   { path: '/sketch', Component: SketchesPage },
-  { path: '/about', Component: AboutPage },
+  { path: '/tattooСare', Component: TattooСare },
   { path: '/note', Component: NotePage }
 ];
 

@@ -1,0 +1,1 @@
+export { TattooСare } from './ui/TattooСare-page'

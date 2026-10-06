@@ -26,7 +26,7 @@ export const SketchModal = ({ sketch, onClose }: SketchModalProps) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4
+      className="fixed inset-0 z-500 flex items-center justify-center p-4
                  bg-black/85 backdrop-blur-sm animate-[fadeIn_200ms_ease-out]"
       onClick={onClose}
     >

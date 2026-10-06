@@ -130,7 +130,7 @@
 
   transform: translateX(100%);
   /* спрятана справа за экраном */
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 
   pointer-events: none;
@@ -142,4 +142,34 @@
   z-index: 100;
   /* открытая всегда поверх закрытых */
   pointer-events: auto;
+}
+
+
+
+@keyframes tapPulseDark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(187, 166, 141, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px rgba(187, 166, 141, 0);
+  }
+}
+
+.anim-tapPulseDark:active {
+  animation: tapPulseDark 300ms ease-out;
+}
+
+@keyframes tapPulseLight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(19, 14, 8, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 0 12px rgba(20, 16, 10, 0);
+  }
+}
+
+.anim-tapPulseLight:active {
+  animation: tapPulseLight 300ms ease-out;
 }

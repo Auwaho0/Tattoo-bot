@@ -78,7 +78,12 @@ export const PortfolioPage = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex p-4 bg-[#111111] h-full justify-center">
+    <div className={`flex p-4 bg-[#111111] h-full justify-center
+      ${isDark
+        ? 'bg-[#080808] text-[#f0ebe4]'
+        : 'bg-[#e8e5dc] text-[#1c1a17]'
+      }`
+    }>
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
         <div className="w-full max-w-md">
           <BackButton isDark={isDark} />
@@ -141,6 +146,6 @@ export const PortfolioPage = () => {
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 };

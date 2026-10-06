@@ -1,7 +1,13 @@
+import { useTheme } from '@/features/home';
 export const Hero = () => {
-
+  const isDark = useTheme((s) => s.isDark);
   return (
-    <div className='relative top-19 flex flex-col justify-center items-center text-[#bba68d]'>
+    <div
+      className={`relative top-19 flex flex-col justify-center items-center transition-all duration-500 
+        ${isDark
+          ? 'text-[#bba68d]'
+          : 'text-[#41321f]'
+        }`}>
 
       <span
         className='relative z-10 text-7xl font-gothic '
@@ -17,7 +23,7 @@ export const Hero = () => {
       </span>
 
       <span
-        className='relative z-4 font-script text-xl text-[#bba68d]'
+        className='relative z-4 font-script text-xl'
       >
         Искусство на твоей жизни
       </span>

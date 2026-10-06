@@ -1,1 +1,0 @@
-export { MainMenu } from './ui/main-menu';
