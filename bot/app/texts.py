@@ -30,8 +30,7 @@ CONTACTS_TEXT = (
     "🕐 Часы работы: Пн–Вс, 11:00–21:00\n\n"
     "🔗 Социальные сети:\n"
     "• VK: https://vk.ru/everarttattoo\n"
-    "• Telegram-канал: t.me/EverArt_Tattoo\n"
-    "• Телефон: +7 (996) 281-73-06"
+    "• Telegram-канал: t.me/EverArt_Tattoo"
 )
 
 # Уход за тату

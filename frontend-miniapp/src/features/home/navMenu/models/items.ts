@@ -1,13 +1,13 @@
-import sketchLight from '@/assets/light/box.jpg';
+import sketchLight from '@/assets/light/bg-sketch.png';
 import sketchDark from '@/assets/dark/bg-sketch.png';
 
-import portfolioLight from '@/assets/light/box.jpg';
+import portfolioLight from '@/assets/light/bg-portfolio.png';
 import portfolioDark from '@/assets/dark/bg-portfolio.png';
 
-import infoLight from '@/assets/light/box.jpg';
+import infoLight from '@/assets/light/bg-info.png';
 import infoDark from '@/assets/dark/bg-info.png';
 
-import bookingLight from '@/assets/light/box.jpg';
+import bookingLight from '@/assets/dark/bg-booking.png';
 import bookingDark from '@/assets/dark/bg-booking.png';
 
 export type NavImage = {
@@ -18,7 +18,7 @@ export type NavImage = {
 export const NAV_IMAGES: Record<string, NavImage> = {
   sketch: { light: sketchLight, dark: sketchDark },
   portfolio: { light: portfolioLight, dark: portfolioDark },
-  about: { light: infoLight, dark: infoDark },
+  "tattoo-care": { light: infoLight, dark: infoDark },
   note: { light: bookingLight, dark: bookingDark },
 };
 

@@ -1,9 +1,16 @@
 import { ChevronsRight } from "lucide-react";
-import { useTheme } from '@/features/home';
-import { DualImage } from '@/shared/ui';
-import { NAV_IMAGES, DEFAULT_NAV_IMAGE } from '../models/items';
+import { DualImage } from "@/shared/ui";
+import { NAV_IMAGES, DEFAULT_NAV_IMAGE } from "../models/items";
+import { Link } from "react-router-dom";
+import { useTheme } from "@/features/home";
+import { memo } from "react";
 
-import { Link } from 'react-router-dom';
+const PREFETCH_MAP: Record<string, () => Promise<unknown>> = {
+  portfolio: () => import("@/pages/portfolio"),
+  sketch: () => import("@/pages/sketches"),
+  "tattoo-care": () => import("@/pages/tattooСare"),
+  note: () => import("@/pages/note"),
+};
 
 interface NavMenuProps {
   id: string;
@@ -11,61 +18,50 @@ interface NavMenuProps {
   context: string;
 }
 
-export const NavMenu = ({ id, title, context }: NavMenuProps) => {
-  const isDark = useTheme((s) => s.isDark);
-
+export const NavMenu = memo(({ id, title, context }: NavMenuProps) => {
+  const isDark = useTheme((s) => s.isDark); // ← нужен только для DualImage
   const { light, dark } = NAV_IMAGES[id] ?? DEFAULT_NAV_IMAGE;
+  const prefetch = PREFETCH_MAP[id];
 
   return (
-    <div className="relative flex flex-col px-5 my-3">
+    <div className="relative flex flex-col px-5 my-3 ">
       <Link
         to={`/${id}`}
-        className={` border border-[#322d27] bg-[#111111] rounded-xl h-25 cursor-pointer hover:bg-[#242424]  transition-all duration-300
-        ${isDark
-            ? 'bg-[#080808] text-[#bba68d] anim-tapPulseDark'
-            : 'bg-[#f7f6f2] text-[#1c1a17] anim-tapPulseLight'
-          }`}>
-
+        onMouseEnter={prefetch}
+        onTouchStart={prefetch}
+        onFocus={prefetch}
+        className="border border-line bg-card rounded-xl h-25 cursor-pointer
+                   transition-colors duration-300
+                   hover:bg-card-hover
+                   anim-tapScale anim-tapScaleDark"
+      >
         <div className="grid grid-cols-[45fr_35fr_10fr] h-full rounded-lg">
-          <div
-            className="relative flex flex-col items-center justify-center bg-black rounded-xl"
-            style={{ background: 'linear-gradient(to right, black 85%, transparent 100%)' }}
-          >
+          <div className="relative flex flex-col items-center justify-center rounded-xl"
+            style={{ background: 'linear-gradient(to right, var(--c-surface) 85%, transparent 100%)' }}>
             <DualImage
               srcLight={light}
               srcDark={dark}
               active={isDark}
-              className=""
-              mask={[
-                'linear-gradient(to right, green 45%, transparent 100%)',
-              ].join(', ')}
+              mask="linear-gradient(to right, black 45%, transparent 100%)"
             />
           </div>
 
           <div className="flex flex-col items-center justify-center text-left">
-            <span
-              className="pl-2 w-full  text-[16px] pb-1 font-nunito-sans"
-              style={{ fontWeight: 400 }}
-            >
+            <span className="pl-2 w-full text-[16px] pb-1 font-nunito text-gold">
               {title}
             </span>
-            <span
-              className="pl-2 w-full mb-3 text-[#898989] text-[12px] leading-[11px] font-nunito-sans whitespace-pre-line"
-              style={{ fontWeight: 400 }}
-            >
+            <span className="pl-2 w-full mb-3 text-dim text-[12px] leading-2.75
+                             font-nunito whitespace-pre-line">
               {context}
             </span>
           </div>
 
-          <div className="flex flex-col items-end justify-end text">
-            <ChevronsRight
-              color={`${isDark ? '#bba68d' : '#1c1a17'}`}
-              className="mr-2 mb-2"
-              size={30}
-            />
+          <div className="flex flex-col items-end justify-end">
+            <ChevronsRight className="mr-2 mb-2 text-gold" size={30} />
           </div>
         </div>
-      </Link >
-    </div >
+      </Link>
+    </div>
   );
-};
+})
+NavMenu.displayName = 'NavMenu';

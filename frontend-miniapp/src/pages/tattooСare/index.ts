@@ -1,1 +1,1 @@
-export { TattooСare } from './ui/TattooСare-page'
+export { TattooСare } from './ui/TattooСare-page';

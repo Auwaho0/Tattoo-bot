@@ -1,0 +1,66 @@
+/* Базовые «антитап»-правила — безопасны везде */
+.tap {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Сама анимация — только на тач-устройствах.
+   На десктопе остаются обычные hover-эффекты. */
+@media (hover: none) and (pointer: coarse) {
+  .tap {
+    transition:
+      transform 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      filter 130ms ease,
+      box-shadow 130ms ease;
+    will-change: transform;
+  }
+
+  /* scale настраивается через CSS-переменную --tap-scale */
+  .tap:active {
+    transform: scale(var(--tap-scale, 0.96));
+    filter: brightness(1.12) saturate(1.05);
+  }
+
+  /* Золотое свечение при нажатии — для акцентных кнопок (бронь, тема) */
+  .tap--glow:active {
+    box-shadow:
+      0 0 18px rgba(187, 166, 141, 0.45),
+      0 0 38px rgba(187, 166, 141, 0.18);
+  }
+
+  /* Кровавый «толчок» — для карточек эскизов и работ */
+  .tap--shake:active {
+    animation: tap-shake 240ms ease;
+  }
+}
+
+@keyframes tap-shake {
+
+  0%,
+  100% {
+    transform: translateX(0) scale(0.98);
+  }
+
+  30% {
+    transform: translateX(-2px) scale(0.97);
+  }
+
+  70% {
+    transform: translateX(2px) scale(0.97);
+  }
+}
+
+/* Уважаем системную настройку «уменьшить движение» */
+@media (prefers-reduced-motion: reduce) {
+
+  .tap,
+  .tap:active {
+    transition: none;
+    animation: none;
+    transform: none;
+    filter: none;
+    box-shadow: none;
+  }
+}

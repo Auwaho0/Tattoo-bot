@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   useInfiniteQuery,
   useQueryClient,
@@ -25,8 +26,8 @@ export const useSketchesQuery = () =>
     queryKey: sketchKeys.list(),
     queryFn: ({ pageParam }) => fetchSketches(pageParam),
     initialPageParam: 0,
-    getNextPageParam: (lastPage) =>
-      lastPage.has_more ? lastPage.offset + lastPage.limit : undefined,
+    getNextPageParam: (last) =>
+      last.has_more ? last.offset + last.limit : undefined,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60 * 24,
     refetchOnWindowFocus: true,
@@ -37,20 +38,22 @@ export const useSketchesQuery = () =>
 export const usePrefetchNextSketches = () => {
   const qc = useQueryClient();
 
-  return (nextOffset: number) => {
-    const key = sketchKeys.list();
+  return useCallback(
+    (nextOffset: number) => {
+      const key = sketchKeys.list();
+      const cached = qc.getQueryData<InfiniteData<SketchPage>>(key);
+      const lastPage = cached?.pages[cached.pages.length - 1];
+      if (lastPage && !lastPage.has_more) return;
 
-    const cached = qc.getQueryData<InfiniteData<SketchPage>>(key);
-    const lastPage = cached?.pages[cached.pages.length - 1];
-    if (lastPage && !lastPage.has_more) return;
-
-    qc.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn: ({ pageParam }) => fetchSketches(pageParam as number),
-      initialPageParam: nextOffset,
-      getNextPageParam: (last: { has_more: any; offset: any; limit: any; }) =>
-        last.has_more ? last.offset + last.limit : undefined,
-      staleTime: 1000 * 60 * 5,
-    });
-  };
+      qc.prefetchInfiniteQuery({
+        queryKey: key,
+        queryFn: ({ pageParam }) => fetchSketches(pageParam as number),
+        initialPageParam: nextOffset,
+        getNextPageParam: (last: { has_more: boolean; offset: number; limit: number }) =>
+          last.has_more ? last.offset + last.limit : undefined,
+        staleTime: 1000 * 60 * 5,
+      });
+    },
+    [qc],
+  );
 };

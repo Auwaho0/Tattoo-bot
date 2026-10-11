@@ -24,12 +24,24 @@ declare global {
     setHeaderColor: (color: string) => void;
     setBackgroundColor: (color: string) => void;
     enableClosingConfirmation: () => void;
+    onEvent: (event: string, handler: () => void) => void;
+    offEvent: (event: string, handler: () => void) => void;
     MainButton: {
-      text: string; show: () => void; hide: () => void;
+      text: string;
+      show: () => void;
+      hide: () => void;
       setText: (t: string) => void;
+      setParams: (params: {
+        color?: string;
+        text_color?: string;
+        text?: string;
+        is_active?: boolean;
+        is_visible?: boolean;
+      }) => void;
       onClick: (cb: () => void) => void;
       offClick: (cb: () => void) => void;
-      enable: () => void; disable: () => void;
+      enable: () => void;
+      disable: () => void;
       showProgress: (leaveActive?: boolean) => void;
       hideProgress: () => void;
     };

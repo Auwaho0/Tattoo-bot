@@ -10,7 +10,7 @@ export const NAVITEMS = [
     context: "Мои работы",
   },
   {
-    id: "tattooСare",
+    id: "tattoo-care",
     title: "УХОД ЗА ТАТУ",
     context: "всё об уходе\nзп татуироовкой",
   },

@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib';
+import { memo } from 'react';
 
 export interface DualImageProps {
   /** Источник, который виден при active=false */
@@ -19,7 +20,7 @@ export interface DualImageProps {
   children?: React.ReactNode;
 }
 
-export const DualImage = ({
+export const DualImage = memo(({
   srcLight,
   srcDark,
   active,
@@ -67,4 +68,5 @@ export const DualImage = ({
       {children}
     </>
   );
-};
+});
+DualImage.displayName = 'DualImage';

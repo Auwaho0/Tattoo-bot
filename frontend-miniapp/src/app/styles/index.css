@@ -1,58 +1,120 @@
 @import "tailwindcss";
+@import './tap.css';
 
+/* ---------------------------------------------------------------------------
+   Tailwind 4 theme 
+--------------------------------------------------------------------------- */
+@theme inline {
+  /* surfaces */
+  --color-app: var(--c-app);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-card: var(--c-card);
+  --color-card-hover: var(--c-card-hover);
+
+  /* borders */
+  --color-line: var(--c-line);
+  --color-line-soft: var(--c-line-soft);
+
+  /* text */
+  --color-main: var(--c-main);
+  --color-dim: var(--c-dim);
+  --color-mute: var(--c-mute);
+
+  /* accents */
+  --color-gold: var(--c-gold);
+  --color-gold-dim: var(--c-gold-dim);
+  --color-blood: var(--c-blood);
+
+  /* fonts */
+  --font-gothic: "CS Mistbane", "Cinzel Decorative", cursive;
+  --font-cinzel: "Cinzel", serif;
+  --font-script: "Script Thin Pen", cursive;
+  --font-nunito: "Nunito Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Значения переменных.
+   :root = светлая тема (default), .dark = тёмная.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* surfaces */
+  --c-app: #e8e5dc;
+  /* фон вокруг контейнера */
+  --c-surface: #f7f6f2;
+  /* основная поверхность страницы */
+  --c-surface-2: #ffffff;
+  /* приподнятый слой (кнопка темы, чипы) */
+  --c-card: #ffffff;
+  /* карточки (работы, эскизы) */
+  --c-card-hover: #faf9f6;
+
+  /* borders */
+  --c-line: #ded8cb;
+  --c-line-soft: #e8e5dc;
+
+  /* text */
+  --c-main: #1c1a17;
+  --c-dim: #68635c;
+  --c-mute: #958e85;
+
+  /* accents — на светлом золото темнее, иначе сливается с фоном */
+  --c-gold: #a1815a;
+  --c-gold-dim: #8d6f4a;
+  --c-blood: #8b0000;
+}
+
+.dark {
+  --c-app: #080808;
+  --c-surface: #0a0a0a;
+  --c-surface-2: #111111;
+  --c-card: #0d0d0d;
+  --c-card-hover: #161616;
+
+  --c-line: #2a2a2a;
+  --c-line-soft: #1a1816;
+
+  --c-main: #f0ebe4;
+  --c-dim: #898989;
+  --c-mute: #4a4a4a;
+
+  --c-gold: #bba68d;
+  --c-gold-dim: #a89681;
+  --c-blood: #8b0000;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
 @layer base {
-  :root {
-    --font-gothic: 'UnifrakturMaguntia', 'Cinzel Decorative', cursive, serif;
-    --font-cinzel: 'Cinzel', serif;
-    --font-script: "Script Thin Pen", cursive;
-    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    /* Light Theme (parchment, marble, graphite) */
-    --bg-primary: #f6f5f1;
-    --bg-secondary: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.88);
-    --bg-card-hover: rgba(255, 255, 255, 0.98);
-    --text-primary: #1c1a17;
-    --text-secondary: #68635c;
-    --text-muted: #958e85;
-    --border-color: #e6e2d9;
-    --border-subtle: #f0ece3;
-    --accent: #23201d;
-    --accent-gold: #b38b4d;
-    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
-  }
-
-  .dark {
-    /* Dark Theme (obsidian, graphite, warm bronze) */
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #121212;
-    --bg-card: rgba(22, 22, 22, 0.85);
-    --bg-card-hover: rgba(28, 28, 28, 0.95);
-    --text-primary: #f0ebe4;
-    --text-secondary: #a0978d;
-    --text-muted: #6b645b;
-    --border-color: #272421;
-    --border-subtle: #1c1a18;
-    --accent: #e8e2d8;
-    --accent-gold: #cba86e;
-    --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4), 0 2px 8px -1px rgba(0, 0, 0, 0.3);
-  }
-
   body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: Nunito Sans;
-    transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-      color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-      border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    -webkit-tap-highlight-color: transparent;
-
+    background-color: var(--c-app);
+    color: var(--c-main);
+    font-family: var(--font-nunito);
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Плавная смена темы.
+   Навешивается на корневую обёртку страницы — все дети наследуют transition.
+--------------------------------------------------------------------------- */
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Fonts
+--------------------------------------------------------------------------- */
 @font-face {
   font-family: 'CS Mistbane';
-  src: url('@/assets/fonts/CSMistbane.otf') format('truetype');
+  src: url('@/assets/fonts/CSMistbane.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -66,86 +128,40 @@
 }
 
 .font-gothic {
-  font-family: 'CS Mistbane', 'Cinzel Decorative';
+  font-family: var(--font-gothic);
 }
 
 .font-script {
-  font-family: 'Script Thin Pen', cursive;
+  font-family: var(--font-script);
 }
 
 .font-cinzel {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-cinzel);
 }
 
-.font-sans {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  font-weight: 500;
-}
-
-.font-nunito-sans {
-  font-family: "Nunito Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 300;
-  font-style: normal;
-  font-variation-settings:
-    "wdth" 100,
-    "YTLC" 500;
-}
-
-/* Smooth theme transitions */
-.theme-transition {
-  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: transparent;
-}
-
-
-
+/* ---------------------------------------------------------------------------
+   Панели 
+--------------------------------------------------------------------------- */
 .panel {
   position: fixed;
   inset: 0;
-  /* top/right/bottom/left: 0 */
-  /* обязательно непрозрачный, иначе видно низ */
   overflow-y: auto;
   z-index: 50;
-
   transform: translateX(100%);
-  /* спрятана справа за экраном */
   transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
-
   pointer-events: none;
-  /* чтобы невидимая панель не ловила клики */
 }
 
 .open {
   transform: translateX(0);
   z-index: 100;
-  /* открытая всегда поверх закрытых */
   pointer-events: auto;
 }
 
-
-
+/* ---------------------------------------------------------------------------
+   Taп
+--------------------------------------------------------------------------- */
 @keyframes tapPulseDark {
   0% {
     box-shadow: 0 0 0 0 rgba(187, 166, 141, 0.5);
@@ -172,4 +188,237 @@
 
 .anim-tapPulseLight:active {
   animation: tapPulseLight 300ms ease-out;
+}
+
+/* --- Telegram-style tap --- */
+
+.anim-tapScale {
+  transform-origin: center;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+  /* убираем синий highlight на Android */
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Мгновенное сжатие при удержании пальца */
+.anim-tapScale:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+  transition-duration: 80ms;
+  /* сжатие — быстро */
+}
+
+/* --- Тёмная тема: лёгкое затемнение фона при нажатии --- */
+.anim-tapScaleDark:active {
+  filter: brightness(0.85);
+}
+
+/* --- Опционально: пульс-волна (как ripple) --- */
+.anim-tapRipple {
+  position: relative;
+  overflow: hidden;
+}
+
+.anim-tapRipple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(187, 166, 141, 0.35) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.anim-tapRipple:active::after {
+  opacity: 1;
+  transform: scale(1.5);
+  transition-duration: 0ms;
+  /* мгновенный старт */
+}
+
+
+
+
+/* ---------------------------------------------------------------------------
+   Развёртывание свитка.
+   Каждый элемент списка выезжает сверху с лёгким блюром.
+   Задержка задаётся через --i: 0, 1, 2, ...
+--------------------------------------------------------------------------- */
+@keyframes unroll-item {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* По умолчанию элементы списка невидимы — чтобы до раскрытия их не было */
+.scroll-unroll .scroll-item {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+}
+
+/* Когда секция открыта — запускается каскад */
+.scroll-unroll.is-open .scroll-item {
+  animation: unroll-item 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* 60ms — старт после раскрытия контейнера, 150ms — шаг между элементами */
+  animation-delay: calc(60ms + var(--i, 0) * 150ms);
+}
+
+/* Уважаем системную настройку «уменьшить движение» */
+@media (prefers-reduced-motion: reduce) {
+
+  .scroll-unroll .scroll-item,
+  .scroll-unroll.is-open .scroll-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   анимамция заргузки
+--------------------------------------------------------------------------- */
+
+.loader {
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.loader .dots {
+  display: inline-flex;
+  margin-left: 2px;
+}
+
+.loader .dots span {
+  opacity: 1;
+  animation: blink 1.4s infinite;
+}
+
+/* Сдвигаем задержку для каждой точки */
+.loader .dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loader .dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader .dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+
+
+/* ---------------------------------------------------------------------------
+   Анимации модалок и лайтбокса.
+   Централизованы здесь, чтобы не зависеть от того, какой widget смонтирован.
+--------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lightboxZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   PortfolioSort: слайд + вспышка
+--------------------------------------------------------------------------- */
+
+.sort-indicator {
+  /* ease-out-quart — плавно прибывает, без резкого торможения.
+     380ms — оптимум: не мгновенно, но и не «тормозит» на тап. */
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  box-shadow: 0 0 12px rgba(187, 166, 141, 0.15);
+}
+
+/* Одноразовая вспышка — играет при каждом ре-маунте (key={glowKey}) */
+.sort-glow {
+  animation: sort-glow-flash 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sort-glow-flash {
+  from {
+    opacity: 1;
+    box-shadow:
+      0 0 20px rgba(187, 166, 141, 0.75),
+      inset 0 0 12px rgba(187, 166, 141, 0.35);
+  }
+
+  to {
+    opacity: 0;
+    box-shadow:
+      0 0 4px rgba(187, 166, 141, 0),
+      inset 0 0 4px rgba(187, 166, 141, 0);
+  }
+}
+
+/* Уважаем настройку «уменьшить движение» */
+@media (prefers-reduced-motion: reduce) {
+  .sort-indicator {
+    transition: none;
+  }
+
+  .sort-glow {
+    animation: none;
+    opacity: 0;
+  }
 }

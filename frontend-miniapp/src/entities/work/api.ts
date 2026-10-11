@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   useInfiniteQuery,
   useQueryClient,
@@ -28,37 +29,36 @@ export const useWorksQuery = (order: SortOrder = 'new') =>
     queryKey: workKeys.list(order),
     queryFn: ({ pageParam }) => fetchWorks(pageParam, order),
     initialPageParam: 0,
-    getNextPageParam: (lastPage) =>
-      lastPage.has_more ? lastPage.offset + lastPage.limit : undefined,
+    getNextPageParam: (last) =>
+      last.has_more ? last.offset + last.limit : undefined,
     staleTime: 1000 * 60 * 60,
-    gcTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 2,
   });
 
-/**
- * Фоновый prefetch следующей страницы.
- * Вызывается из отдельного observer'а с большим rootMargin.
- */
 export const usePrefetchNextWorks = (order: SortOrder = 'new') => {
   const qc = useQueryClient();
 
-  return (nextOffset: number) => {
-    const key = workKeys.list(order);
+  // useCallback — функция стабильна, пока order не меняется.
+  // Иначе Observer в PortfolioPage будет пересоздаваться на каждый рендер.
+  return useCallback(
+    (nextOffset: number) => {
+      const key = workKeys.list(order);
+      const cached = qc.getQueryData<InfiniteData<WorkPage>>(key);
+      const lastPage = cached?.pages[cached.pages.length - 1];
+      if (lastPage && !lastPage.has_more) return;
 
-    // Если последняя страница уже сказала «всё» — не грузим
-    const cached = qc.getQueryData<InfiniteData<WorkPage>>(key);
-    const lastPage = cached?.pages[cached.pages.length - 1];
-    if (lastPage && !lastPage.has_more) return;
-
-    qc.prefetchInfiniteQuery({
-      queryKey: key,
-      queryFn: ({ pageParam }) => fetchWorks(pageParam as number, order),
-      initialPageParam: nextOffset,
-      getNextPageParam: (last: { has_more: any; offset: any; limit: any; }) =>
-        last.has_more ? last.offset + last.limit : undefined,
-      staleTime: 1000 * 60 * 60,
-    });
-  };
+      qc.prefetchInfiniteQuery({
+        queryKey: key,
+        queryFn: ({ pageParam }) => fetchWorks(pageParam as number, order),
+        initialPageParam: nextOffset,
+        getNextPageParam: (last: { has_more: boolean; offset: number; limit: number }) =>
+          last.has_more ? last.offset + last.limit : undefined,
+        staleTime: 1000 * 60 * 60,
+      });
+    },
+    [qc, order],
+  );
 };

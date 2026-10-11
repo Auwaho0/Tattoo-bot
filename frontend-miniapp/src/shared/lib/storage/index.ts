@@ -1,0 +1,1 @@
+export { saveLastBooking, getLastBooking, hasRecentBooking } from './lastBooking';

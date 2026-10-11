@@ -1,16 +1,30 @@
-
-import { BackButton } from '@/shared/ui';
-import { useTheme } from '@/features/home';
+import { useLocation } from 'react-router-dom';
+import { BackButton, OrnamentLine } from '@/shared/ui';
+import { BookingForm } from '@/features/booking-form';
 
 export const NotePage = () => {
-  const isDark = useTheme((s) => s.isDark);
+  const { pathname } = useLocation();
+  const isActive = pathname === '/note';
+
   return (
-    <div className="p-4 bg-black h-full">
-      <BackButton isDark={isDark} />
+    <div className="min-h-screen p-4 bg-surface theme-transition text-main">
+      <div className="max-w-md mx-auto flex flex-col gap-4">
+        <BackButton />
 
-      <h1 className="serif text-2xl mt-3 mb-4">Запись</h1>
+        <header className="mt-2 flex flex-col gap-1">
+          <h1 className="text-2xl font-nunito text-gold tracking-wider">
+            ЗАПИСЬ
+          </h1>
+          <p className="text-dim text-xs font-nunito">
+            Заполни форму — мастер свяжется с тобой в Telegram
+          </p>
 
+          <OrnamentLine />
+        </header>
 
+        <BookingForm isActive={isActive} />
+      </div>
     </div>
   );
 };
+
