@@ -28,8 +28,8 @@ export const useSketchesQuery = () =>
     initialPageParam: 0,
     getNextPageParam: (last) =>
       last.has_more ? last.offset + last.limit : undefined,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 60 * 24,
+    staleTime: 1000 * 60 * 5, // 5 минут
+    gcTime: 1000 * 60 * 60 * 24, // 1 день
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     retry: 2,
@@ -51,7 +51,8 @@ export const usePrefetchNextSketches = () => {
         initialPageParam: nextOffset,
         getNextPageParam: (last: { has_more: boolean; offset: number; limit: number }) =>
           last.has_more ? last.offset + last.limit : undefined,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 5, // 5 минут
+        gcTime: 1000 * 60 * 60 * 24, // 1 день
       });
     },
     [qc],

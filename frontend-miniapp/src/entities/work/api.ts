@@ -31,8 +31,8 @@ export const useWorksQuery = (order: SortOrder = 'new') =>
     initialPageParam: 0,
     getNextPageParam: (last) =>
       last.has_more ? last.offset + last.limit : undefined,
-    staleTime: 1000 * 60 * 60,
-    gcTime: 1000 * 60 * 60 * 24 * 7,
+    staleTime: 1000 * 60 * 60 * 6, // 6 часов
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 дней
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 2,
@@ -56,7 +56,8 @@ export const usePrefetchNextWorks = (order: SortOrder = 'new') => {
         initialPageParam: nextOffset,
         getNextPageParam: (last: { has_more: boolean; offset: number; limit: number }) =>
           last.has_more ? last.offset + last.limit : undefined,
-        staleTime: 1000 * 60 * 60,
+        staleTime: 1000 * 60 * 60 * 6, // 6 часов
+        gcTime: 1000 * 60 * 60 * 24 * 7, // 7 дней
       });
     },
     [qc, order],
