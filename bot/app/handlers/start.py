@@ -1,4 +1,6 @@
 """Обработчики команды /start и главного меню."""
+from asyncio import log
+
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
@@ -15,6 +17,11 @@ async def cmd_start(message: Message):
     text = ""
     if message.from_user.id == ADMIN_ID:
         text += "\n\n⚰️ Ты вошёл как <b>мастер</b>. /admin — панель."
+        
+    log.info("📌 user_id=%s chat_id=%s username=%s",
+             message.from_user.id,
+             message.chat.id,
+             message.from_user.username)
     
 
     """Приветствие и главное меню."""
