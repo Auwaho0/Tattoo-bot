@@ -56,7 +56,7 @@ jobs:
       - name: 📢 Уведомление о запуске бота
         env:
           TG_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TG_CHAT:  ${{ secrets.ADMIN_ID }}
+          TG_CHAT:  ${{ secrets.TG_CHAT }}
         run: |
           if [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ]; then
             echo "⚠️ TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы — пропускаем"
